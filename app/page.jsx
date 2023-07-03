@@ -3,11 +3,12 @@ import { useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { imageHandler } from "../src/script.js";
+import { fileToUrl, imageHandler } from "../src/script.js";
 
 export default function Home() {
 	const [fileDrag, setFileDrag] = useState(false);
 	const [image, setImage] = useState(null);
+	const [imageUrl, setImageUrl] = useState(null);
 	const [mapUrlOk, setMapUrlOk] = useState(null);
 	const [code, setCode] = useState(null);
 	const filePickerInput = useRef(null);
@@ -25,56 +26,93 @@ export default function Home() {
 						<p className="text-sm text-secondary-text">Images larger than 128x128px may not be accepted by the mapmaker</p>
 						<p className="text-sm text-secondary-text">Recommended size: 64x64px</p>
 					</div>
-					<div
-						className={(fileDrag ? "hidden " : "flex ") + "flex-col justify-center items-center h-48 w-full select-none bg-surface-0 p-16 rounded-3xl border-dashed border border-border-1"}
-						onDragEnter={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							setFileDrag(true);
-						}}
-					>
-						<p>
-							{"Drag an image here or "}
-							<button
-								className="text-link-text"
-								onClick={() => {
-									filePickerInput.current.click();
+					{image ? (
+						<div className="flex flex-col items-center">
+							{imageUrl ? (
+								<div className="flex flex-col items-center gap-8">
+									<img
+										src={imageUrl}
+										className="w-40 h-40 [image-rendering:pixelated]"
+									/>
+									<button
+										className="bg-blue-0 w-fit self-center py-2 px-4 rounded-2xl border-b-4 border-b-blue-1 hover:brightness-95 active:border-b-0 active:mt-1"
+										onClick={() => {
+											setImage(null);
+											setImageUrl(null);
+										}}
+									>
+										Clear image
+									</button>
+								</div>
+							) : (
+								<></>
+							)}
+						</div>
+					) : (
+						<>
+							<div
+								className={
+									(fileDrag ? "hidden " : "flex ") + "flex-col justify-center items-center h-48 w-full select-none bg-surface-0 p-16 rounded-3xl border-dashed border border-border-1"
+								}
+								onDragEnter={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									setFileDrag(true);
 								}}
 							>
-								upload a file
-							</button>
-							<input
-								className="hidden"
-								type="file"
-								name="file"
-								accept="image/png, image/jpeg"
-								ref={(ref) => (filePickerInput.current = ref)}
-								onChange={(e) => {
-									setImage(e.target.files[0]);
+								<p>
+									{"Drag an image here or "}
+									<button
+										className="text-link-text"
+										onClick={() => {
+											filePickerInput.current.click();
+										}}
+									>
+										upload a file
+									</button>
+									<input
+										className="hidden"
+										type="file"
+										name="file"
+										accept="image/png, image/jpeg"
+										ref={(ref) => (filePickerInput.current = ref)}
+										onChange={(e) => {
+											console.log(e.target.files[0]);
+											setImage(e.target.files[0]);
+											(async () => {
+												setImageUrl(await fileToUrl(e.target.files[0]));
+											})();
+										}}
+									/>
+								</p>
+								<p className="text-secondary-text text-sm">Allowed image types: JPEG, PNG</p>
+							</div>
+							<div
+								className={
+									(fileDrag ? "flex " : "hidden ") + "flex-col justify-center items-center h-48 w-full select-none bg-highlight p-16 rounded-3xl border-dashed border border-border-1"
+								}
+								onDragLeave={(e) => {
+									e.stopPropagation();
+									setFileDrag(false);
 								}}
-							/>
-						</p>
-						<p className="text-secondary-text text-sm">Allowed image types: JPEG, PNG</p>
-					</div>
-					<div
-						className={(fileDrag ? "flex " : "hidden ") + "flex-col justify-center items-center h-48 w-full select-none bg-highlight p-16 rounded-3xl border-dashed border border-border-1"}
-						onDragLeave={(e) => {
-							e.stopPropagation();
-							setFileDrag(false);
-						}}
-						onDrop={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							setFileDrag(false);
-							console.log(e.dataTransfer.files);
-						}}
-						onDragOver={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-						}}
-					>
-						<p>Drop an image here</p>
-					</div>
+								onDrop={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									setFileDrag(false);
+									setImage(e.dataTransfer.files[0]);
+									(async () => {
+										setImageUrl(await fileToUrl(e.dataTransfer.files[0]));
+									})();
+								}}
+								onDragOver={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+							>
+								<p>Drop an image here</p>
+							</div>
+						</>
+					)}
 				</div>
 
 				<div className="bg-surface-1 border-border-1 border w-full rounded-lg p-8 flex flex-col gap-4">
