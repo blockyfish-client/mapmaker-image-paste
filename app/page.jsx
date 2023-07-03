@@ -1,5 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { imageHandler } from "../src/script.js";
 
@@ -152,12 +154,20 @@ export default function Home() {
 					<button
 						className="bg-blue-0 w-fit self-center py-2 px-4 rounded-2xl border-b-4 border-b-blue-1 hover:brightness-95 active:border-b-0 active:mt-1"
 						onClick={async () => {
-							var res = await imageHandler(image, {
-								mapId: mapIdInput.current.value,
-								stringId: stringIdInput.current.value,
-								token: bearerInput.current.value
-							});
-							setCode(res);
+							if (!image) toast.error("Please upload an image first");
+							else if (!mapIdInput.current.value) toast.error("Please input map ID");
+							else if (!stringIdInput.current.value) toast.error("Please input map string ID");
+							else if (!bearerInput.current.value) toast.error("Please input bearer token");
+							else toast.info("Generating...");
+
+							if (image && mapIdInput.current.value && stringIdInput.current.value && bearerInput.current.value) {
+								var res = await imageHandler(image, {
+									mapId: mapIdInput.current.value,
+									stringId: stringIdInput.current.value,
+									token: bearerInput.current.value
+								});
+								setCode(res);
+							}
 						}}
 					>
 						Generate!
@@ -173,6 +183,22 @@ export default function Home() {
 					</div>
 				</div>
 			</div>
+
+			<ToastContainer
+				style={{
+					zIndex: 69420
+				}}
+				position="bottom-center"
+				autoClose={2000}
+				hideProgressBar
+				newestOnTop
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss={false}
+				draggable={false}
+				pauseOnHover={false}
+				theme="dark"
+			/>
 		</main>
 	);
 }
