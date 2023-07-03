@@ -5,9 +5,9 @@ const mapPrefix = `fetch("https://apibeta.deeeep.io/maps/{{mapId}}", {
     "authorization": "Bearer {{token}}",
     "content-type": "application/json;charset=UTF-8",
   },
-  "body": "{\"string_id\":\"{{stringId}}\",\"data\":\"{\\\"screenObjects\\\":[`;
-const pixelTemplate = `{\\\"type\\\":\\\"Sky\\\",\\\"layerId\\\":\\\"sky\\\",\\\"points\\\":[{\\\"x\\\":{{x1}},\\\"y\\\":{{y1}}},{\\\"x\\\":{{x2}},\\\"y\\\":{{y2}}},{\\\"x\\\":{{x3}},\\\"y\\\":{{y3}}},{\\\"x\\\":{{x4}},\\\"y\\\":{{y4}}}],\\\"settings\\\":{\\\"collidable\\\":true},\\\"colors\\\":[{{color}},{{color}}]}`;
-const mapSuffix = `],\\\"settings\\\":{\\\"gravity\\\":9.8},\\\"worldSize\\\":{\\\"width\\\":\\\"{{width}}\\\",\\\"height\\\":\\\"{{height}}\\\"}}\"}",
+  "body": "{\\"string_id\\":\\"{{stringId}}\\",\\"data\\":\\"{\\\\\\"screenObjects\\\\\\":[`;
+const pixelTemplate = `{\\\\\\"type\\\\\\":\\\\\\"Sky\\\\\\",\\\\\\"layerId\\\\\\":\\\\\\"sky\\\\\\",\\\\\\"points\\\\\\":[{\\\\\\"x\\\\\\":{{x1}},\\\\\\"y\\\\\\":{{y1}}},{\\\\\\"x\\\\\\":{{x2}},\\\\\\"y\\\\\\":{{y2}}},{\\\\\\"x\\\\\\":{{x3}},\\\\\\"y\\\\\\":{{y3}}},{\\\\\\"x\\\\\\":{{x4}},\\\\\\"y\\\\\\":{{y4}}}],\\\\\\"settings\\\\\\":{\\\\\\"collidable\\\\\\":true},\\\\\\"colors\\\\\\":[{{color}},{{color}}]}`;
+const mapSuffix = `],\\\\\\"settings\\\\\\":{\\\\\\"gravity\\\\\\":9.8},\\\\\\"worldSize\\\\\\":{\\\\\\"width\\\\\\":\\\\\\"{{width}}\\\\\\",\\\\\\"height\\\\\\":\\\\\\"{{height}}\\\\\\"}}\\"}",
   "method": "PUT"
 });`;
 
@@ -48,8 +48,9 @@ function pixelsFromImg(url) {
 					for (var y = 0; y < height; y++) {
 						var p = c.getImageData(x, y, 1, 1).data;
 						var hex = p[0].toString(16).padStart(2, "0") + p[1].toString(16).padStart(2, "0") + p[2].toString(16).padStart(2, "0");
+						var dec = parseInt(hex, 16);
 						if (!arr[x]) arr.push([]);
-						arr[x].push(hex);
+						arr[x].push(dec);
 					}
 				}
 
@@ -66,7 +67,10 @@ export const imageHandler = (file, { mapId, token, stringId }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			var url = await fileToUrl(file);
-			var { pixels, width, height } = await pixelsFromImg(url);
+			var pixelObj = await pixelsFromImg(url);
+			var pixels = pixelObj.arr;
+			var width = pixelObj.width;
+			var height = pixelObj.height;
 			var code = mapPrefix.replaceAll("{{mapId}}", mapId).replaceAll("{{token}}", token).replaceAll("{{stringId}}", stringId);
 			for (var x = 0; x < width; x++) {
 				for (var y = 0; y < height; y++) {
@@ -89,7 +93,7 @@ export const imageHandler = (file, { mapId, token, stringId }) => {
 						.replaceAll("{{x4}}", x4)
 						.replaceAll("{{y4}}", y4)
 						.replaceAll("{{color}}", pixel);
-					if (x != width - 1 && y != height - 1) {
+					if (x != width - 1 || y != height - 1) {
 						code += ",";
 					}
 				}
