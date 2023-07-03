@@ -6,8 +6,13 @@ import { imageHandler } from "../src/script.js";
 export default function Home() {
 	const [fileDrag, setFileDrag] = useState(false);
 	const [image, setImage] = useState(null);
+	const [mapUrlOk, setMapUrlOk] = useState(null);
 	const [code, setCode] = useState(null);
 	const filePickerInput = useRef(null);
+	const mapUrlInput = useRef(null);
+	const mapIdInput = useRef(null);
+	const stringIdInput = useRef(null);
+	const bearerInput = useRef(null);
 	return (
 		<main className="bg-background text-primary-text flex items-center justify-center">
 			<div className="max-w-4xl py-24 px-12 flex min-h-screen w-screen flex-col items-center gap-12">
@@ -42,15 +47,8 @@ export default function Home() {
 								name="file"
 								accept="image/png, image/jpeg"
 								ref={(ref) => (filePickerInput.current = ref)}
-								onChange={async (e) => {
-									if (e.target.files[0]) {
-										var res = await imageHandler(e.target.files[0], {
-											mapId: "12512",
-											token: "c7221a73d4144752516932b873f849e6",
-											stringId: "test3"
-										});
-										setCode(res);
-									}
+								onChange={(e) => {
+									setImage(e.target.files[0]);
 								}}
 							/>
 						</p>
@@ -79,6 +77,91 @@ export default function Home() {
 
 				<div className="bg-surface-1 border-border-1 border w-full rounded-lg p-8 flex flex-col gap-4">
 					<p className="text-xl">Settings</p>
+					<div className="flex justify-between">
+						<div className="flex flex-col w-[calc(50%-16px)] gap-4">
+							<div className="flex flex-col gap-2">
+								<p>Map ID</p>
+								<input
+									type="text"
+									placeholder="Ex. 12512"
+									className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
+									ref={(ref) => (mapIdInput.current = ref)}
+								/>
+							</div>
+							<div className="flex flex-col gap-2">
+								<p>Map string ID</p>
+								<input
+									type="text"
+									placeholder="Ex. test3"
+									className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
+									ref={(ref) => (stringIdInput.current = ref)}
+								/>
+							</div>
+						</div>
+						<div className="flex flex-col w-[calc(50%-16px)]">
+							<div className="flex flex-col gap-2">
+								<p>Bearer token</p>
+								<input
+									type="text"
+									placeholder="Ex. c7221a73d4144752516932b873f849e6"
+									className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
+									ref={(ref) => (bearerInput.current = ref)}
+								/>
+							</div>
+						</div>
+					</div>
+
+					<hr className="border-secondary-text border-dashed" />
+
+					<div className="flex flex-col gap-2">
+						<p>Don't know how to get map ID and string ID?</p>
+						<p>Input map URL below</p>
+						<div className="flex bg-surface-0 border border-border-1 py-1 px-2 rounded-lg">
+							<p>https://mapmaker.deeeep.io/map/</p>
+							<input
+								type="text"
+								placeholder="test3"
+								className="grow bg-[#0000] outline-none"
+								ref={(ref) => (mapUrlInput.current = ref)}
+								onChange={async () => {
+									mapUrlInput.current.value = mapUrlInput.current.value.replace("https://mapmaker.deeeep.io/map/", "");
+									setMapUrlOk("pending");
+									const res = await (await fetch("https://apibeta.deeeep.io/maps/s/" + mapUrlInput.current.value)).json();
+									if (res.error) {
+										setMapUrlOk(false);
+										mapIdInput.current.value = "";
+										stringIdInput.current.value = "";
+									} else {
+										setMapUrlOk(true);
+										mapIdInput.current.value = res.id;
+										stringIdInput.current.value = res.string_id;
+									}
+								}}
+							/>
+							{mapUrlOk == true ? (
+								<i className="bi bi-check2 text-success-text"></i>
+							) : mapUrlOk == false ? (
+								<i className="bi bi-x-lg text-error-text"></i>
+							) : mapUrlOk == "pending" ? (
+								<i className="bi bi-three-dots text-secondary-text"></i>
+							) : (
+								<></>
+							)}
+						</div>
+					</div>
+					<button
+						className="bg-blue-0 w-fit self-center py-2 px-4 rounded-2xl border-b-4 border-b-blue-1 hover:brightness-95 active:border-b-0 active:mt-1"
+						onClick={async () => {
+							var res = await imageHandler(image, {
+								mapId: mapIdInput.current.value,
+								stringId: stringIdInput.current.value,
+								token: bearerInput.current.value
+							});
+							setCode(res);
+						}}
+					>
+						Generate!
+					</button>
 				</div>
 
 				<div className="bg-surface-1 border-border-1 border w-full rounded-lg p-8 flex flex-col gap-4">

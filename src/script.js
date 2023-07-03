@@ -1,5 +1,3 @@
-import Jimp from "jimp";
-
 const mapPrefix = `fetch("https://apibeta.deeeep.io/maps/{{mapId}}", {
   "headers": {
     "authorization": "Bearer {{token}}",
@@ -11,7 +9,7 @@ const mapSuffix = `],\\\\\\"settings\\\\\\":{\\\\\\"gravity\\\\\\":9.8},\\\\\\"w
   "method": "PUT"
 });`;
 
-function fileToUrl(file) {
+export function fileToUrl(file) {
 	return new Promise((resolve, reject) => {
 		var reader = new FileReader();
 		reader.onload = function () {
