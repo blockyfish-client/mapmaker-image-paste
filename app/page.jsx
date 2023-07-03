@@ -1,8 +1,11 @@
 "use client";
 import { useRef, useState } from "react";
 
+import { imageHandler } from "../src/script.js";
+
 export default function Home() {
 	const [fileDrag, setFileDrag] = useState(false);
+	const [image, setImage] = useState(null);
 	const filePickerInput = useRef(null);
 	return (
 		<main className="bg-background text-primary-text flex items-center justify-center">
@@ -38,7 +41,13 @@ export default function Home() {
 								accept="image/png, image/jpeg"
 								ref={(ref) => (filePickerInput.current = ref)}
 								onChange={(e) => {
-									console.log(e.target.files[0]);
+									if (e.target.files[0]) {
+										imageHandler(e.target.files[0], {
+											mapId: "12512",
+											token: "c7221a73d4144752516932b873f849e6",
+											stringId: "test3"
+										});
+									}
 								}}
 							/>
 						</p>
