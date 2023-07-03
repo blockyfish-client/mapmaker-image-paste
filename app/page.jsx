@@ -15,7 +15,8 @@ export default function Home() {
 				<div className="bg-surface-1 border-border-1 border w-full rounded-lg p-8 flex flex-col gap-4">
 					<div>
 						<p className="text-xl">Select image</p>
-						<p className="text-sm text-secondary-text">Images larger than 256x256px may not load on mapmaker</p>
+						<p className="text-sm text-secondary-text">Images larger than 128x128px may not be accepted by the mapmaker</p>
+						<p className="text-sm text-secondary-text">Recommended size: 64x64px</p>
 					</div>
 					<div
 						className={(fileDrag ? "hidden " : "flex ") + "flex-col justify-center items-center h-48 w-full select-none bg-surface-0 p-16 rounded-3xl border-dashed border border-border-1"}
