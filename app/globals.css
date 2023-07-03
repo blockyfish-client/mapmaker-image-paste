@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("bootstrap-icons.min.css");
+
+@font-face {
+	font-family: "Twemoji";
+	src: url(/twemoji/Twemoji.Mozilla.ttf);
+	unicode-range: U+1F300-1F5FF, U+1F600-1F64F, U+1F680-1F6FF, U+1F900-1F9FF, U+2600-26FF;
+}
+
+* {
+	font-family: "Twemoji", "Quicksand", sans-serif;
+	font-weight: 500;
+}
+
+code,
+code * {
+	font-family: "Twemoji", Inconsolata, Monaco, Consolas, "Courier New", Courier, monospace;
+}
