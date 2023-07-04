@@ -25,7 +25,7 @@ export default function Home() {
 	return (
 		<main className="bg-background text-primary-text flex items-center justify-center">
 			<div className="max-w-4xl py-24 px-12 flex min-h-screen w-screen flex-col items-center gap-12">
-				<p className="text-4xl">test</p>
+				<p className="text-4xl">Image to Deeeep.io Map</p>
 				<div className="bg-surface-1 border-border-1 border w-full rounded-lg p-8 flex flex-col gap-4">
 					<div>
 						<p className="text-xl">Select image</p>
