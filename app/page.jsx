@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { fileToUrl, imageHandler } from "../src/script.js";
+import ReactModal from "react-modal";
 
 export default function Home() {
 	const [fileDrag, setFileDrag] = useState(false);
@@ -12,6 +13,7 @@ export default function Home() {
 	const [mapUrlOk, setMapUrlOk] = useState(null);
 	const [code, setCode] = useState("");
 	const [showFullCode, setShowFullCode] = useState(false);
+	const [bearerTokenModalOpen, setBearerTokenModalOpen] = useState(true);
 	const filePickerInput = useRef(null);
 	const mapUrlInput = useRef(null);
 	const mapIdInput = useRef(null);
@@ -141,7 +143,12 @@ export default function Home() {
 						</div>
 						<div className="flex flex-col w-[calc(50%-16px)]">
 							<div className="flex flex-col gap-2">
-								<p>Bearer token</p>
+								<p>
+									Bearer token{" "}
+									<button onClick={() => setBearerTokenModalOpen(true)}>
+										<i className="bi bi-question-circle text-sm"></i>
+									</button>
+								</p>
 								<input
 									type="text"
 									placeholder="Ex. c7221a73d4144752516932b873f849e6"
@@ -250,6 +257,67 @@ export default function Home() {
 					</>
 				</div>
 			</div>
+
+			<ReactModal
+				isOpen={bearerTokenModalOpen}
+				shouldCloseOnEsc={true}
+				shouldCloseOnOverlayClick={true}
+				onRequestClose={() => setBearerTokenModalOpen(false)}
+			>
+				<div className="w-[500px] h-[calc(100vh-300px)] pt-8 px-0 m-0 flex flex-col gap-4">
+					<div className="self-end relative h-0">
+						<button
+							className="relative right-8 top-0"
+							onClick={() => setBearerTokenModalOpen(false)}
+						>
+							<i className="bi bi-x"></i>
+						</button>
+					</div>
+					<p className="text-xl mb-2 -mt-4 px-8">How to get bearer token</p>
+					<div className="grow h-full overflow-y-auto pl-12 pr-8 pb-8">
+						<ol className="list-decimal space-y-4">
+							<li>
+								<p>
+									Open{" "}
+									<a
+										className="text-link-text"
+										href="https://mapmaker.deeeep.io"
+										target="_blank"
+									>
+										Deeeep.io Mapmaker
+									</a>
+									.
+								</p>
+								<img
+									src="/img/bearertoken/1.png"
+									className="rounded mt-2"
+								/>
+							</li>
+							<li>
+								<p>Open DevTools by pressing Ctrl+Shift+I and go to the Networks tab.</p>
+								<img
+									src="/img/bearertoken/2.png"
+									className="rounded mt-2"
+								/>
+							</li>
+							<li>
+								<p>Login to your account on Mapmaker, then click on the network log that says "signin".</p>
+								<img
+									src="/img/bearertoken/3.png"
+									className="rounded mt-2"
+								/>
+							</li>
+							<li>
+								<p>Go to the Response tab and copy the token. That's your bearer token.</p>
+								<img
+									src="/img/bearertoken/4.png"
+									className="rounded mt-2"
+								/>
+							</li>
+						</ol>
+					</div>
+				</div>
+			</ReactModal>
 
 			<ToastContainer
 				style={{

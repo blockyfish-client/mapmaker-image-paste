@@ -42,3 +42,31 @@ code,
 code * {
 	font-family: "Twemoji", Inconsolata, Monaco, Consolas, "Courier New", Courier, monospace;
 }
+
+/* REACT MODAL CUSTOM CSS */
+.ReactModalPortal:has(.ReactModal__Content--after-open) {
+	z-index: 20 !important;
+	position: fixed !important;
+	top: 0 !important;
+	bottom: 0 !important;
+	left: 0 !important;
+	right: 0 !important;
+	background-color: #0008 !important;
+}
+.ReactModal__Overlay {
+	background: #0000 !important;
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: center !important;
+	justify-content: center !important;
+}
+.ReactModal__Content {
+	width: max-content !important;
+	max-height: calc(100vh - 10rem) !important;
+	background: #181f2a !important;
+	border: 1px #232d3b solid !important;
+	position: revert !important;
+	border-radius: 0.75rem !important;
+	color: #fff !important;
+	padding: 0 !important;
+}
