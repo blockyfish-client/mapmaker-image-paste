@@ -23,6 +23,35 @@ export function fileToUrl(file) {
 	});
 }
 
+function findMostFrequentColor(pixelArray) {
+	return new Promise((resolve, reject) => {
+		try {
+			var combined = [];
+			for (var x = 0; x < pixelArray.length; x++) {
+				for (var y = 0; y < pixelArray[x].length; y++) {
+					combined.push(pixelArray[x][y]);
+				}
+			}
+			if (combined.length == 0) return resolve(null);
+			var modeMap = {};
+			var maxEl = combined[0],
+				maxCount = 1;
+			for (var i = 0; i < combined.length; i++) {
+				var el = combined[i];
+				if (modeMap[el] == null) modeMap[el] = 1;
+				else modeMap[el]++;
+				if (modeMap[el] > maxCount) {
+					maxEl = el;
+					maxCount = modeMap[el];
+				}
+			}
+			return resolve(maxEl);
+		} catch (err) {
+			return reject(err);
+		}
+	});
+}
+
 function pixelsFromImg(url) {
 	return new Promise(async (resolve, reject) => {
 		try {
@@ -61,7 +90,7 @@ function pixelsFromImg(url) {
 	});
 }
 
-export const imageHandler = (file, { mapId, token, stringId, scale = 1 }) => {
+export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimizeForBg = true }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			var url = await fileToUrl(file);
@@ -70,29 +99,48 @@ export const imageHandler = (file, { mapId, token, stringId, scale = 1 }) => {
 			var width = pixelObj.width;
 			var height = pixelObj.height;
 			var code = mapPrefix.replaceAll("{{mapId}}", mapId).replaceAll("{{token}}", token).replaceAll("{{stringId}}", stringId);
+
+			if (optimizeForBg) {
+				var bgColor = await findMostFrequentColor(pixels);
+				console.log(bgColor);
+
+				code += pixelTemplate
+					.replaceAll("{{x1}}", 0)
+					.replaceAll("{{y1}}", 0)
+					.replaceAll("{{x2}}", 0)
+					.replaceAll("{{y2}}", height * scale)
+					.replaceAll("{{x3}}", width * scale)
+					.replaceAll("{{y3}}", height * scale)
+					.replaceAll("{{x4}}", width * scale)
+					.replaceAll("{{y4}}", 0)
+					.replaceAll("{{color}}", bgColor);
+			} else {
+				bgColor = "16777215";
+			}
+
 			for (var x = 0; x < width; x++) {
 				for (var y = 0; y < height; y++) {
 					var pixel = pixels[x][y];
-					var x1 = x * scale,
-						y1 = y * scale,
-						x2 = x * scale,
-						y2 = (y + 1) * scale,
-						x3 = (x + 1) * scale,
-						y3 = (y + 1) * scale,
-						x4 = (x + 1) * scale,
-						y4 = y * scale;
-					code += pixelTemplate
-						.replaceAll("{{x1}}", x1)
-						.replaceAll("{{y1}}", y1)
-						.replaceAll("{{x2}}", x2)
-						.replaceAll("{{y2}}", y2)
-						.replaceAll("{{x3}}", x3)
-						.replaceAll("{{y3}}", y3)
-						.replaceAll("{{x4}}", x4)
-						.replaceAll("{{y4}}", y4)
-						.replaceAll("{{color}}", pixel);
-					if (x != width - 1 || y != height - 1) {
-						code += ",";
+					if (pixel != bgColor) {
+						if (x != 0 || y != 0 || optimizeForBg) code += ",";
+						var x1 = x * scale,
+							y1 = y * scale,
+							x2 = x * scale,
+							y2 = (y + 1) * scale,
+							x3 = (x + 1) * scale,
+							y3 = (y + 1) * scale,
+							x4 = (x + 1) * scale,
+							y4 = y * scale;
+						code += pixelTemplate
+							.replaceAll("{{x1}}", x1)
+							.replaceAll("{{y1}}", y1)
+							.replaceAll("{{x2}}", x2)
+							.replaceAll("{{y2}}", y2)
+							.replaceAll("{{x3}}", x3)
+							.replaceAll("{{y3}}", y3)
+							.replaceAll("{{x4}}", x4)
+							.replaceAll("{{y4}}", y4)
+							.replaceAll("{{color}}", pixel);
 					}
 				}
 			}

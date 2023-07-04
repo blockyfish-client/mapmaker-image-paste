@@ -17,6 +17,7 @@ export default function Home() {
 
 	const filePickerInput = useRef(null);
 	const scaleInput = useRef(null);
+	const optimizeForBgInput = useRef(null);
 	const mapUrlInput = useRef(null);
 	const mapIdInput = useRef(null);
 	const stringIdInput = useRef(null);
@@ -37,7 +38,7 @@ export default function Home() {
 								<div className="flex flex-col items-center gap-8">
 									<img
 										src={imageUrl}
-										className="w-40 h-40 [image-rendering:pixelated] rounded-lg"
+										className="min-w-[10rem] [image-rendering:pixelated] rounded-lg"
 									/>
 									<button
 										className="bg-red-500 w-fit self-center py-2 px-4 rounded-2xl border-b-4 border-b-red-600 hover:brightness-95 active:border-b-0 active:mt-1"
@@ -140,7 +141,7 @@ export default function Home() {
 							<div className="flex flex-flex gap-4 items-center">
 								<input
 									type="checkbox"
-									ref={(ref) => (mapIdInput.current = ref)}
+									ref={(ref) => (optimizeForBgInput.current = ref)}
 								/>
 								<p>Optimize map for images with solid color or transparent background</p>
 							</div>
@@ -240,7 +241,8 @@ export default function Home() {
 									mapId: mapIdInput.current.value,
 									stringId: stringIdInput.current.value,
 									token: bearerInput.current.value,
-									scale: scaleInput.current.value
+									scale: scaleInput.current.value,
+									optimizeForBg: optimizeForBgInput.current.checked
 								});
 								setShowFullCode(false);
 								setCode(res);
