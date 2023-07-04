@@ -43,6 +43,41 @@ code * {
 	font-family: "Twemoji", Inconsolata, Monaco, Consolas, "Courier New", Courier, monospace;
 }
 
+input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	position: relative;
+	visibility: hidden;
+	align-items: center;
+	justify-content: center;
+	display: inline-grid;
+	grid-template-columns: 16px;
+}
+input[type="checkbox"]:before {
+	content: "";
+	width: 18px;
+	height: 18px;
+	background-color: #0000;
+	border: 1px #374151 solid;
+	border-radius: 3px;
+	visibility: visible;
+	grid-column: 1;
+	grid-row: 1 / span 1;
+}
+input[type="checkbox"]:checked:before {
+	background-color: #409eff;
+	border: 1px #409eff solid;
+}
+input[type="checkbox"]:checked:after {
+	content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>');
+	width: 15px;
+	height: 19px;
+	margin: 1px 0 0 1px;
+	visibility: visible;
+	grid-column: 1;
+	grid-row: 1 / span 1;
+}
+
 /* REACT MODAL CUSTOM CSS */
 .ReactModalPortal:has(.ReactModal__Content--after-open) {
 	z-index: 20 !important;

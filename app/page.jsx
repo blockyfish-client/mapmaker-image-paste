@@ -13,8 +13,10 @@ export default function Home() {
 	const [mapUrlOk, setMapUrlOk] = useState(null);
 	const [code, setCode] = useState("");
 	const [showFullCode, setShowFullCode] = useState(false);
-	const [bearerTokenModalOpen, setBearerTokenModalOpen] = useState(true);
+	const [bearerTokenModalOpen, setBearerTokenModalOpen] = useState(false);
+
 	const filePickerInput = useRef(null);
+	const scaleInput = useRef(null);
 	const mapUrlInput = useRef(null);
 	const mapIdInput = useRef(null);
 	const stringIdInput = useRef(null);
@@ -120,6 +122,33 @@ export default function Home() {
 
 				<div className="bg-surface-1 border-border-1 border w-full rounded-lg p-8 flex flex-col gap-4">
 					<p className="text-xl">Settings</p>
+
+					<div className="flex justify-between">
+						<div className="flex flex-col w-[calc(50%-16px)] gap-4">
+							<div className="flex flex-col gap-2">
+								<p>Scale</p>
+								<input
+									type="text"
+									placeholder="1"
+									defaultValue={1}
+									className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
+									ref={(ref) => (scaleInput.current = ref)}
+								/>
+							</div>
+						</div>
+						<div className="flex flex-col w-[calc(50%-16px)]">
+							<div className="flex flex-flex gap-4 items-center">
+								<input
+									type="checkbox"
+									ref={(ref) => (mapIdInput.current = ref)}
+								/>
+								<p>Optimize for images with solid color background</p>
+							</div>
+						</div>
+					</div>
+
+					<hr className="border-secondary-text border-dashed" />
+
 					<div className="flex justify-between">
 						<div className="flex flex-col w-[calc(50%-16px)] gap-4">
 							<div className="flex flex-col gap-2">
