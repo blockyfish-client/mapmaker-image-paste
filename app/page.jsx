@@ -197,7 +197,6 @@ export default function Home() {
 							else if (!mapIdInput.current.value) toast.error("Please input map ID");
 							else if (!stringIdInput.current.value) toast.error("Please input map string ID");
 							else if (!bearerInput.current.value) toast.error("Please input bearer token");
-							else toast.info("Generating...");
 
 							if (image && mapIdInput.current.value && stringIdInput.current.value && bearerInput.current.value) {
 								var res = await imageHandler(image, {
@@ -207,6 +206,7 @@ export default function Home() {
 								});
 								setShowFullCode(false);
 								setCode(res);
+								toast.success("Code generated!");
 							}
 						}}
 					>
@@ -217,16 +217,34 @@ export default function Home() {
 				<div className="bg-surface-1 border-border-1 border w-full rounded-lg p-8 flex flex-col gap-4">
 					<p className="text-xl">Results</p>
 					<>
-						<div className="min-h-48 w-full overflow-x-auto bg-surface-0 p-8 rounded-xl border border-border-1">
+						<div className="relative min-h-48 w-full overflow-x-auto bg-surface-0 p-8 rounded-xl border border-border-1">
+							<button
+								className={
+									(code ? "" : "hidden ") +
+									"flex items-center justify-center w-10 h-10 bg-[#fff2] hover:bg-[#fff3] border-[#fff2] transition-all border absolute top-4 right-4 rounded"
+								}
+								onClick={() => {
+									navigator.clipboard.writeText(code);
+									toast.success("Copied to clipboard!");
+								}}
+							>
+								<i className="bi bi-clipboard text-[#eee] text-lg"></i>
+							</button>
 							<pre>
 								<code>
 									{showFullCode
 										? code
-										: code.slice(0, 100) + (code ? `\n... ${code.length - 100} characters hidden` : "Click the generate button above to generate code for mapmaker")}
+										: code.slice(0, 200) +
+										  (code ? `\n... ${(code.length - 100).toLocaleString("en-US")} characters hidden` : "Click the generate button above to generate code for mapmaker")}
 								</code>
 							</pre>
 						</div>
-						<button className={(showFullCode ? "hidden " : "") + "w-fit -mt-2 text-secondary-text flex items-center hover:bg-[#fff1] py-1 px-2 rounded-lg"}>
+						<button
+							className={(showFullCode || !code ? "hidden " : "") + "w-fit -mt-2 text-secondary-text flex items-center hover:bg-[#fff1] py-1 px-2 rounded-lg"}
+							onClick={() => {
+								setShowFullCode(true);
+							}}
+						>
 							<i className="bi bi-arrows-angle-expand text-xs mr-2"></i> Show full code <span className="text-xs ml-1">(This can cause the page to lag a lot)</span>
 						</button>
 					</>
