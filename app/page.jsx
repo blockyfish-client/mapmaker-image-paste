@@ -142,7 +142,7 @@ export default function Home() {
 									type="checkbox"
 									ref={(ref) => (mapIdInput.current = ref)}
 								/>
-								<p>Optimize for images with solid color background</p>
+								<p>Optimize map for images with solid color or transparent background</p>
 							</div>
 						</div>
 					</div>
@@ -230,6 +230,7 @@ export default function Home() {
 						className="bg-blue-500 w-fit self-center py-2 px-4 rounded-2xl border-b-4 border-b-blue-600 hover:brightness-95 active:border-b-0 active:mt-1"
 						onClick={async () => {
 							if (!image) toast.error("Please upload an image first");
+							else if (!scaleInput.current.value) toast.error("Please input image scale");
 							else if (!mapIdInput.current.value) toast.error("Please input map ID");
 							else if (!stringIdInput.current.value) toast.error("Please input map string ID");
 							else if (!bearerInput.current.value) toast.error("Please input bearer token");
@@ -238,7 +239,8 @@ export default function Home() {
 								var res = await imageHandler(image, {
 									mapId: mapIdInput.current.value,
 									stringId: stringIdInput.current.value,
-									token: bearerInput.current.value
+									token: bearerInput.current.value,
+									scale: scaleInput.current.value
 								});
 								setShowFullCode(false);
 								setCode(res);

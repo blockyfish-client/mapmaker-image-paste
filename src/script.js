@@ -61,7 +61,7 @@ function pixelsFromImg(url) {
 	});
 }
 
-export const imageHandler = (file, { mapId, token, stringId }) => {
+export const imageHandler = (file, { mapId, token, stringId, scale = 1 }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			var url = await fileToUrl(file);
@@ -73,14 +73,14 @@ export const imageHandler = (file, { mapId, token, stringId }) => {
 			for (var x = 0; x < width; x++) {
 				for (var y = 0; y < height; y++) {
 					var pixel = pixels[x][y];
-					var x1 = x,
-						y1 = y,
-						x2 = x,
-						y2 = y + 1,
-						x3 = x + 1,
-						y3 = y + 1,
-						x4 = x + 1,
-						y4 = y;
+					var x1 = x * scale,
+						y1 = y * scale,
+						x2 = x * scale,
+						y2 = (y + 1) * scale,
+						x3 = (x + 1) * scale,
+						y3 = (y + 1) * scale,
+						x4 = (x + 1) * scale,
+						y4 = y * scale;
 					code += pixelTemplate
 						.replaceAll("{{x1}}", x1)
 						.replaceAll("{{y1}}", y1)
@@ -96,7 +96,7 @@ export const imageHandler = (file, { mapId, token, stringId }) => {
 					}
 				}
 			}
-			code += mapSuffix.replaceAll("{{width}}", width / 10).replaceAll("{{height}}", height / 10);
+			code += mapSuffix.replaceAll("{{width}}", (width * scale) / 10).replaceAll("{{height}}", (height * scale) / 10);
 			return resolve(code);
 		} catch (error) {
 			return reject(error);
