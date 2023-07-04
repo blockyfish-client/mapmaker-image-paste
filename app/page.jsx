@@ -255,7 +255,13 @@ export default function Home() {
 				</div>
 
 				<div className="bg-surface-1 border-border-1 border w-full rounded-lg p-8 flex flex-col gap-4">
-					<p className="text-xl">Results</p>
+					<div>
+						<p className="text-xl">Results</p>
+						<p className="text-sm text-secondary-text">
+							If the generated code is longer than 6.2M characters, mapmaker may not accept it. The exactly limit hasn't been discovered yet, so 6.2M is an estimate.
+						</p>
+					</div>
+
 					<>
 						<div className="relative min-h-48 w-full overflow-x-auto bg-surface-0 p-8 rounded-xl border border-border-1">
 							<button
