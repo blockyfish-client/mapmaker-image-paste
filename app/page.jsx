@@ -289,6 +289,16 @@ export default function Home() {
 						</button>
 					</>
 				</div>
+				<div className="flex flex-col gap-2 text-secondary-text">
+					<p className="mt-8">Made by Pi</p>
+					<a
+						href="https://github.com/blockyfish-client/mapmaker-image-paste"
+						target="_blank"
+						className="hover:text-primary-text text-center"
+					>
+						<i className="bi bi-github text-3xl"></i>
+					</a>
+				</div>
 			</div>
 
 			<ReactModal
