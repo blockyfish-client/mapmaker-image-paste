@@ -38,7 +38,7 @@ export default function Home() {
 								<div className="flex flex-col items-center gap-8">
 									<img
 										src={imageUrl}
-										className="min-w-[10rem] [image-rendering:pixelated] rounded-lg"
+										className="min-w-[10rem] min-h-[10rem] [image-rendering:pixelated] rounded-lg"
 									/>
 									<button
 										className="bg-red-500 w-fit self-center py-2 px-4 rounded-2xl border-b-4 border-b-red-600 hover:brightness-95 active:border-b-0 active:mt-1"
@@ -261,6 +261,19 @@ export default function Home() {
 							If the generated code is longer than 6.2M characters, mapmaker may not accept it. The exactly limit hasn't been discovered yet, so 6.2M is an estimate.
 						</p>
 					</div>
+
+					<div
+						id="preview-container"
+						className="hidden"
+					>
+						<p className="text-lg">Preview</p>
+						<canvas
+							id="preview-map"
+							className="min-w-[10rem] min-h-[10rem] [image-rendering:pixelated]"
+						></canvas>
+					</div>
+
+					<p className="text-lg">Code</p>
 
 					<>
 						<div className="relative min-h-48 w-full overflow-x-auto bg-surface-0 p-8 rounded-xl border border-border-1">
