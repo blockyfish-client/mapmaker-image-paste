@@ -128,7 +128,7 @@ export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimize
 			for (var x = 0; x < width; x++) {
 				for (var y = 0; y < height; y++) {
 					var pixel = pixels[x][y];
-					if (acThreshold != 0) {
+					if (acThreshold != 0 && bgColor != -1) {
 						var hexPixel = pixel.toString(16);
 						var hexBg = bgColor.toString(16);
 						var rPixel = parseInt(hexPixel.slice(0, 2), 16);
