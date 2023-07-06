@@ -163,6 +163,7 @@ export default function Home() {
 							Further reduce map object count by removing pixels with similar color to the background color. This setting is only used when "Optimize for solid background" is enabled.
 							The higher the percentage, the more pixels will be removed.
 						</p>
+						<p className="text-sm text-secondary-text">Useful if your image has unwanted compression artifacts.</p>
 						<input
 							type="text"
 							placeholder="10"
