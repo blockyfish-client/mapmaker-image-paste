@@ -18,6 +18,7 @@ export default function Home() {
 	const filePickerInput = useRef(null);
 	const scaleInput = useRef(null);
 	const optimizeForBgInput = useRef(null);
+	const imgAssimilationThreshold = useRef(null);
 	const mapUrlInput = useRef(null);
 	const mapIdInput = useRef(null);
 	const stringIdInput = useRef(null);
@@ -134,10 +135,19 @@ export default function Home() {
 									defaultValue={1}
 									className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
 									ref={(ref) => (scaleInput.current = ref)}
+									onChange={() => {
+										scaleInput.current.value = scaleInput.current.value.replaceAll(/[^0-9]/gim, "");
+										if (scaleInput.current.value > 1000) {
+											scaleInput.current.value = 1000;
+										}
+										if (scaleInput.current.value < 0) {
+											scaleInput.current.value = 0;
+										}
+									}}
 								/>
 							</div>
 						</div>
-						<div className="flex flex-col w-[calc(50%-16px)]">
+						<div className="flex flex-col w-[calc(50%-16px)] gap-4">
 							<div className="flex flex-flex gap-4 items-center">
 								<input
 									type="checkbox"
@@ -146,6 +156,29 @@ export default function Home() {
 								<p>Optimize map for images with solid color or transparent background</p>
 							</div>
 						</div>
+					</div>
+					<div className="flex flex-col gap-2">
+						<p>Background color assimination threshold (%)</p>
+						<p className="text-sm text-secondary-text -mt-2">
+							Further reduce map object count by removing pixels with similar color to the background color. This setting is only useful when "Optimize for solid background" is enabled.
+							The higher the percentage, the more pixels will be removed.
+						</p>
+						<input
+							type="text"
+							placeholder="10"
+							defaultValue={10}
+							className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
+							ref={(ref) => (imgAssimilationThreshold.current = ref)}
+							onChange={() => {
+								imgAssimilationThreshold.current.value = imgAssimilationThreshold.current.value.replaceAll(/[^0-9]/gim, "");
+								if (imgAssimilationThreshold.current.value > 100) {
+									imgAssimilationThreshold.current.value = 100;
+								}
+								if (imgAssimilationThreshold.current.value < 0) {
+									imgAssimilationThreshold.current.value = 0;
+								}
+							}}
+						/>
 					</div>
 
 					<hr className="border-secondary-text border-dashed" />
@@ -159,6 +192,9 @@ export default function Home() {
 									placeholder="Ex. 12512"
 									className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
 									ref={(ref) => (mapIdInput.current = ref)}
+									onChange={() => {
+										mapIdInput.current.value = mapIdInput.current.value.replaceAll(/[^0-9]/gim, "");
+									}}
 								/>
 							</div>
 							<div className="flex flex-col gap-2">
@@ -168,6 +204,9 @@ export default function Home() {
 									placeholder="Ex. test3"
 									className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
 									ref={(ref) => (stringIdInput.current = ref)}
+									onChange={() => {
+										stringIdInput.current.value = stringIdInput.current.value.replaceAll(/[^A-Z0-9_]/gim, "").toLowerCase();
+									}}
 								/>
 							</div>
 						</div>
@@ -184,6 +223,9 @@ export default function Home() {
 									placeholder="Ex. c7221a73d4144752516932b873f849e6"
 									className="bg-surface-0 border border-border-1 outline-none py-1 px-2 rounded-lg"
 									ref={(ref) => (bearerInput.current = ref)}
+									onChange={() => {
+										bearerInput.current.value = bearerInput.current.value.replaceAll(/[^A-Z0-9]/gim, "").toLowerCase();
+									}}
 								/>
 							</div>
 						</div>
@@ -203,6 +245,7 @@ export default function Home() {
 								ref={(ref) => (mapUrlInput.current = ref)}
 								onChange={async () => {
 									mapUrlInput.current.value = mapUrlInput.current.value.replace("https://mapmaker.deeeep.io/map/", "");
+									mapUrlInput.current.value = mapUrlInput.current.value.replaceAll(/[^A-Z0-9_]/gim, "").toLowerCase();
 									setMapUrlOk("pending");
 									const res = await (await fetch("https://apibeta.deeeep.io/maps/s/" + mapUrlInput.current.value)).json();
 									if (res.error) {
@@ -232,6 +275,7 @@ export default function Home() {
 						onClick={async () => {
 							if (!image) toast.error("Please upload an image first");
 							else if (!scaleInput.current.value) toast.error("Please input image scale");
+							else if (!imgAssimilationThreshold.current.value) toast.error("Please input image background color assimilation threshold");
 							else if (!mapIdInput.current.value) toast.error("Please input map ID");
 							else if (!stringIdInput.current.value) toast.error("Please input map string ID");
 							else if (!bearerInput.current.value) toast.error("Please input bearer token");
@@ -242,7 +286,8 @@ export default function Home() {
 									stringId: stringIdInput.current.value,
 									token: bearerInput.current.value,
 									scale: scaleInput.current.value,
-									optimizeForBg: optimizeForBgInput.current.checked
+									optimizeForBg: optimizeForBgInput.current.checked,
+									acThreshold: imgAssimilationThreshold.current.value
 								});
 								setShowFullCode(false);
 								setCode(res);

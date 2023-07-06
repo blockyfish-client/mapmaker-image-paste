@@ -89,7 +89,7 @@ function pixelsFromImg(url) {
 	});
 }
 
-export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimizeForBg = true, assimilateColor = true, acThreshold = 10 }) => {
+export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimizeForBg = true, acThreshold = 10 }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			var url = await fileToUrl(file);
@@ -128,7 +128,7 @@ export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimize
 			for (var x = 0; x < width; x++) {
 				for (var y = 0; y < height; y++) {
 					var pixel = pixels[x][y];
-					if (assimilateColor) {
+					if (acThreshold != 0) {
 						var hexPixel = pixel.toString(16);
 						var hexBg = bgColor.toString(16);
 						var rPixel = parseInt(hexPixel.slice(0, 2), 16);
