@@ -160,7 +160,7 @@ export default function Home() {
 					<div className="flex flex-col gap-2">
 						<p>Background color assimilation threshold (%)</p>
 						<p className="text-sm text-secondary-text -mt-2">
-							Further reduce map object count by removing pixels with similar color to the background color. This setting is only useful when "Optimize for solid background" is enabled.
+							Further reduce map object count by removing pixels with similar color to the background color. This setting is only used when "Optimize for solid background" is enabled.
 							The higher the percentage, the more pixels will be removed.
 						</p>
 						<input
