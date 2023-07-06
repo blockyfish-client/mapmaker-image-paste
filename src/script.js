@@ -69,11 +69,10 @@ function pixelsFromImg(url) {
 
 				ctx.drawImage(pic, 0, 0);
 
-				var c = canvas.getContext("2d");
 				var arr = [];
 				for (var x = 0; x < width; x++) {
 					for (var y = 0; y < height; y++) {
-						var p = c.getImageData(x, y, 1, 1).data;
+						var p = ctx.getImageData(x, y, 1, 1).data;
 						var hex = p[0].toString(16).padStart(2, "0") + p[1].toString(16).padStart(2, "0") + p[2].toString(16).padStart(2, "0");
 						var dec = parseInt(hex, 16);
 						if (!arr[x]) arr.push([]);
@@ -90,7 +89,7 @@ function pixelsFromImg(url) {
 	});
 }
 
-export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimizeForBg = true }) => {
+export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimizeForBg = true, acThreshold = 10 }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			var url = await fileToUrl(file);
@@ -100,9 +99,14 @@ export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimize
 			var height = pixelObj.height;
 			var code = mapPrefix.replaceAll("{{mapId}}", mapId).replaceAll("{{token}}", token).replaceAll("{{stringId}}", stringId);
 
+			document.getElementById("preview-container").style.display = "block";
+			var previewCanvas = document.getElementById("preview-map");
+			previewCanvas.setAttribute("width", width);
+			previewCanvas.setAttribute("height", height);
+			var ctx = previewCanvas.getContext("2d");
+
 			if (optimizeForBg) {
 				var bgColor = await findMostFrequentColor(pixels);
-				console.log(bgColor);
 
 				code += pixelTemplate
 					.replaceAll("{{x1}}", 0)
@@ -114,13 +118,30 @@ export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimize
 					.replaceAll("{{x4}}", width * scale)
 					.replaceAll("{{y4}}", 0)
 					.replaceAll("{{color}}", bgColor);
+
+				ctx.fillStyle = "#" + bgColor.toString(16).padStart(6, "0");
+				ctx.fillRect(0, 0, width, height);
 			} else {
-				bgColor = "16777215";
+				bgColor = "-1";
 			}
 
 			for (var x = 0; x < width; x++) {
 				for (var y = 0; y < height; y++) {
 					var pixel = pixels[x][y];
+					if (acThreshold != 0 && bgColor != -1) {
+						var hexPixel = pixel.toString(16);
+						var hexBg = bgColor.toString(16);
+						var rPixel = parseInt(hexPixel.slice(0, 2), 16);
+						var gPixel = parseInt(hexPixel.slice(2, 4), 16);
+						var bPixel = parseInt(hexPixel.slice(4, 6), 16);
+						var rBg = parseInt(hexBg.slice(0, 2), 16);
+						var gBg = parseInt(hexBg.slice(0, 2), 16);
+						var bBg = parseInt(hexBg.slice(0, 2), 16);
+						var nThreshold = (255 / 100) * acThreshold;
+						if (Math.abs(rPixel - rBg) < nThreshold && Math.abs(gPixel - gBg) < nThreshold && Math.abs(bPixel - bBg) < nThreshold) {
+							pixel = bgColor;
+						}
+					}
 					if (pixel != bgColor) {
 						if (x != 0 || y != 0 || optimizeForBg) code += ",";
 						var x1 = x * scale,
@@ -131,6 +152,9 @@ export const imageHandler = (file, { mapId, token, stringId, scale = 1, optimize
 							y3 = (y + 1) * scale,
 							x4 = (x + 1) * scale,
 							y4 = y * scale;
+						ctx.fillStyle = "#" + pixel.toString(16).padStart(6, "0");
+						console.log("#" + pixel.toString(16).padStart(6, "0"));
+						ctx.fillRect(x, y, 1, 1);
 						code += pixelTemplate
 							.replaceAll("{{x1}}", x1)
 							.replaceAll("{{y1}}", y1)
